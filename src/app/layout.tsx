@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AI Text Processor",
-  description: "This application allows users to input text and utilize features such as summarization, translation, and language detection",
+  description:
+    "This application allows users to input text and utilize features such as summarization, translation, and language detection",
 };
 
 export default function RootLayout({
@@ -24,6 +25,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="shortcut icon"
+          href="/images/Sparkle.svg"
+          type="image/x-icon"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
