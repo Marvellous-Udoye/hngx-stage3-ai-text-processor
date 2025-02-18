@@ -15,7 +15,7 @@ const menuIcons = [HomeIcon, ChartBarIcon, UserIcon, BoltIcon, BellIcon];
 
 export default function Sidebar() {
   return (
-    <div className="h-screen w-20 flex flex-col items-center justify-between py-6 px-4 border border-r-[#E2E8F0] max-lg:hidden">
+    <div className="h-screen w-20 flex flex-col items-center justify-between py-6 px-4 border border-r-[#E2E8F0] max-xl:hidden">
       <nav className="flex flex-col gap-8 ">
         <ChatBubbleBottomCenterTextIcon className="size-6 drop-shadow-lg backdrop-blur-[16px] text-[#4F46E5] flex self-center" />
 
@@ -31,7 +31,7 @@ export default function Sidebar() {
       <div className="flex flex-col gap-4 items-center">
         <div className="p-4">
           <Cog6ToothIcon className="size-6 cursor-pointer hover:text-[#4F46E5] transition-all duration-300" />
-        </div>{" "}
+        </div>
         <Image
           width={48}
           height={48}
