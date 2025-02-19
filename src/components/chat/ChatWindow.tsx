@@ -8,6 +8,11 @@ import Avater from "../../../public/images/avater.jpg";
 import Sparkles from "../../../public/images/Sparkle.svg";
 import Navbar from "./Navbar";
 
+type LanguageDetectionResult = {
+  confidence: number;
+  detectedLanguage: string;
+};
+
 export default function ChatWindow() {
   const [inputText, setInputText] = useState("");
   const [chats, setChats] = useState<
@@ -79,8 +84,19 @@ export default function ChatWindow() {
 
     try {
       let detectedLang = "Unknown";
+
       if (languageDetector) {
-        detectedLang = await languageDetector.detect(inputText);
+        const detectionResult = await languageDetector.detect(inputText);
+
+        // It must be an object and have the expected properties
+        if (
+          detectionResult !== null &&
+          typeof detectionResult === "object" &&
+          "detectedLanguage" in detectionResult
+        ) {
+          detectedLang = (detectionResult as LanguageDetectionResult)
+            .detectedLanguage;
+        }
       }
 
       setChats((prev) => [
@@ -174,7 +190,7 @@ export default function ChatWindow() {
 
               {chat.detectedLang && (
                 <p className="text-sm text-gray-500 mt-1">
-                  Detected Language:{" "}
+                  Detected Language:
                   <span className="font-semibold">{chat.detectedLang}</span>
                 </p>
               )}

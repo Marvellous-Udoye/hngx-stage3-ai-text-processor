@@ -35,5 +35,5 @@ export default function Typewriter({
 }: TypewriterProps) {
   const displayText = useTypewriter(text, speed);
 
-  return <p className={className}>{displayText}</p>;
+  return <span className={className}>{displayText}</span>;
 }
