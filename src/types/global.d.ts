@@ -11,6 +11,10 @@ declare global {
         capabilities: () => Promise<{ available: "no" | "readily" | "after-download" }>;
         create: () => Promise<LanguageDetectorInstance>;
       };
+      translator: {
+        capabilities: () => Promise<{ available: "no" | "readily" | "after-download" }>;
+        create: (options: TranslatorOptions) => Promise<TranslatorInstance>;
+      };
     };
   }
 
@@ -37,5 +41,19 @@ declare global {
       callback: (e: { loaded: number; total: number }) => void
     ) => void;
     detect: (text: string) => Promise<string>;
+  }
+
+  interface TranslatorOptions {
+    sourceLanguage: "auto" | "en" | "pt" | "es" | "ru" | "tr" | "fr";
+    targetLanguage: "en" | "pt" | "es" | "ru" | "tr" | "fr";
+  }
+
+  interface TranslatorInstance {
+    ready: Promise<void>;
+    addEventListener: (
+      event: "downloadprogress",
+      callback: (e: { loaded: number; total: number }) => void
+    ) => void;
+    translate: (text: string) => Promise<string>;
   }
 }

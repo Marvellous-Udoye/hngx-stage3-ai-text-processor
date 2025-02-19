@@ -8,7 +8,7 @@ export const summarizeText = async () => {
     sharedContext: "This can be any random text",
     type: "tl;dr", 
     format: "markdown", 
-    length: "long",
+    length: "medium",
   };
 
   try {
@@ -21,10 +21,10 @@ export const summarizeText = async () => {
     }
 
     if (available === "readily") {
-      console.log("The Summarizer API can be used after the model is downloaded.");
+      console.log("The Summarizer API can be used immediately.");
       summarizer = await window.ai.summarizer.create(options);
     } else {
-      console.log("The Summarizer API can be used immediately.");
+      console.log("The Summarizer API can be used after the model is downloaded.");
       summarizer = await window.ai.summarizer.create(options);
       summarizer.addEventListener(
         "downloadprogress",
