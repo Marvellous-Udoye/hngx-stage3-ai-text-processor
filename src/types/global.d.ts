@@ -4,8 +4,12 @@ declare global {
   interface Window {
     ai?: {
       summarizer: {
-        capabilities: () => Promise<{ available: "no" | "readily" | "eventually" }>;
+        capabilities: () => Promise<{ available: "no" | "readily" | "after-download" }>;
         create: (options: SummarizerOptions) => Promise<SummarizerInstance>;
+      };
+      languageDetector: {
+        capabilities: () => Promise<{ available: "no" | "readily" | "after-download" }>;
+        create: () => Promise<LanguageDetectorInstance>;
       };
     };
   }
@@ -23,6 +27,15 @@ declare global {
       event: "downloadprogress",
       callback: (e: { loaded: number; total: number }) => void
     ) => void;
-    summarize: (text: string) => Promise<string>; 
+    summarize: (text: string) => Promise<string>;
+  }
+
+  interface LanguageDetectorInstance {
+    ready: Promise<void>;
+    addEventListener: (
+      event: "downloadprogress",
+      callback: (e: { loaded: number; total: number }) => void
+    ) => void;
+    detect: (text: string) => Promise<string>;
   }
 }
