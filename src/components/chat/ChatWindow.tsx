@@ -1,5 +1,6 @@
 "use client";
 
+import Typewriter from "@/hooks/useTypewriter";
 import { PaperAirplaneIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 import { FormEvent, useEffect, useState } from "react";
 import Navbar from "./Navbar";
@@ -16,7 +17,7 @@ export default function ChatWindow() {
         if (available !== "no") {
           const options = await window.ai.summarizer.create({
             sharedContext: "Random text",
-            type: "key-points",
+            type: "tl;dr",
             format: "markdown",
             length: "medium",
           });
@@ -52,8 +53,12 @@ export default function ChatWindow() {
       <Navbar />
 
       <section className="max-w-[808px] w-full mx-auto px-4 py-8 ">
-        <div className="px-4 py-8 border border-gray-300 rounded-lg min-h-40 opacity-80">
-          {outputText || "Chat area for output text"}
+        <div className="px-4 py-8 min-h-40 opacity-80">
+          {outputText ? (
+            <Typewriter text={outputText} speed={20} />
+          ) : (
+            "Chat area for output text"
+          )}
         </div>
       </section>
 
