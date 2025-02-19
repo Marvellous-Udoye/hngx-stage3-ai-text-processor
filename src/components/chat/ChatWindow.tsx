@@ -8,9 +8,13 @@ import Avater from "../../../public/images/avater.jpg";
 import Sparkles from "../../../public/images/Sparkle.svg";
 import Navbar from "./Navbar";
 
-type LanguageDetectionResult = {
-  confidence: number;
-  detectedLanguage: string;
+const languageMap: Record<string, string> = {
+  en: "English",
+  pt: "Portuguese",
+  es: "Spanish",
+  ru: "Russian",
+  tr: "Turkish",
+  fr: "French",
 };
 
 export default function ChatWindow() {
@@ -66,6 +70,45 @@ export default function ChatWindow() {
     initializeAPIs();
   }, []);
 
+  const handleDetect = async (text: string) => {
+    if (!languageDetector) return "Unknown";
+
+    try {
+      const detectionResults = await languageDetector.detect(text);
+      if (Array.isArray(detectionResults) && detectionResults.length > 0) {
+        const detectedCode = detectionResults[0].detectedLanguage || "Unknown";
+        return languageMap[detectedCode] || "Unknown";
+      }
+    } catch (error) {
+      console.error("Language detection failed:", error);
+    }
+  };
+
+  const handleSummarize = async (index: number) => {
+    if (!summarizer) return;
+
+    setLoading(true);
+    try {
+      const summary = await summarizer.summarize(chats[index].text);
+
+      const aiSummaryChat = {
+        text: summary,
+        time: new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+        isUser: false,
+      };
+
+      setChats((prev) => [...prev, aiSummaryChat]);
+    } catch (error) {
+      console.error("Summarization failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -83,50 +126,15 @@ export default function ChatWindow() {
     setLoading(true);
 
     try {
-      let detectedLang = "Unknown";
-
-      if (languageDetector) {
-        const detectionResult = await languageDetector.detect(inputText);
-
-        // It must be an object and have the expected properties
-        if (
-          detectionResult !== null &&
-          typeof detectionResult === "object" &&
-          "detectedLanguage" in detectionResult
-        ) {
-          detectedLang = (detectionResult as LanguageDetectionResult)
-            .detectedLanguage;
-        }
-      }
-
-      setChats((prev) => [
-        ...prev,
-        { text: inputText, time: timestamp, isUser: false, detectedLang },
-      ]);
-    } catch (error) {
-      console.error("Language detection failed:", error);
-      setChats((prev) => [
-        ...prev,
-        { text: "Error detecting language.", time: timestamp, isUser: false },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSummarize = async (index: number) => {
-    if (!summarizer) return;
-
-    setLoading(true);
-
-    try {
-      const summary = await summarizer.summarize(chats[index].text);
+      const detectedLang = await handleDetect(inputText);
 
       setChats((prev) =>
-        prev.map((chat, i) => (i === index ? { ...chat, summary } : chat))
+        prev.map((chat, index) =>
+          index === prev.length - 1 ? { ...chat, detectedLang } : chat
+        )
       );
     } catch (error) {
-      console.error("Summarization failed:", error);
+      console.error("Language detection failed:", error);
     } finally {
       setLoading(false);
     }
@@ -148,21 +156,21 @@ export default function ChatWindow() {
               chat.isUser ? "justify-end" : "justify-start"
             }`}
           >
-            {!chat.isUser && (
-              <Image
-                width={24}
-                height={24}
-                src={Sparkles}
-                alt="AI picture"
-                className="w-6 h-6 rounded-full"
-              />
-            )}
             {chat.isUser && (
               <Image
                 width={24}
                 height={24}
                 src={Avater}
                 alt="Profile picture"
+                className="w-6 h-6 rounded-full"
+              />
+            )}
+            {!chat.isUser && (
+              <Image
+                width={24}
+                height={24}
+                src={Sparkles}
+                alt="AI picture"
                 className="w-6 h-6 rounded-full"
               />
             )}
@@ -178,37 +186,37 @@ export default function ChatWindow() {
                 className={`p-4 rounded-3xl text-[#475569] leading-[25.6px] ${
                   chat.isUser
                     ? "bg-[#4F46E5] text-white"
-                    : "bg-[#F8FAFC] text-black"
+                    : "bg-[#F8FAFC] text-[#475569]"
                 }`}
               >
-                {chat.isUser ? (
-                  chat.text
-                ) : (
-                  <Typewriter text={chat.text} speed={20} />
-                )}
+                {chat.text}
               </p>
 
               {chat.detectedLang && (
                 <p className="text-sm text-gray-500 mt-1">
-                  Detected Language:
+                  Detected Language:{" "}
                   <span className="font-semibold">{chat.detectedLang}</span>
                 </p>
               )}
 
-              {chat.detectedLang === "en" &&
+              {chat.detectedLang === "English" &&
                 chat.text.length > 150 &&
                 !chat.summary && (
                   <button
                     onClick={() => handleSummarize(index)}
-                    className="mt-2 px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#3B38D6]"
+                    className={`mt-2 px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#3B38D6] ${
+                      loading ? "opacity-50 hover:cursor-not-allowed" : ""
+                    }`}
+                    disabled={loading}
                   >
                     Summarize
                   </button>
                 )}
 
               {chat.summary && (
-                <p className="mt-2 p-3 bg-gray-100 text-gray-700 rounded-lg">
-                  <strong>Summary:</strong> {chat.summary}
+                <p className="mt-2 p-3 bg-[#F8FAFC] text-[#475569] rounded-lg">
+                  <strong>Summary:</strong>
+                  <Typewriter text={chat.summary ?? ""} speed={20} />
                 </p>
               )}
             </div>
