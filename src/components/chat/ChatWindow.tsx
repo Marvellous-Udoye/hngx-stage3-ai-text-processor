@@ -1,6 +1,8 @@
 "use client";
 
 import Typewriter from "@/hooks/useTypewriter";
+import { translateText } from "@/utils/translator";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { PaperAirplaneIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { FormEvent, useEffect, useState } from "react";
@@ -8,13 +10,13 @@ import Avater from "../../../public/images/avater.jpg";
 import Sparkles from "../../../public/images/Sparkle.svg";
 import Navbar from "./Navbar";
 
-const languageMap: Record<string, string> = {
-  en: "English",
-  pt: "Portuguese",
-  es: "Spanish",
-  ru: "Russian",
-  tr: "Turkish",
-  fr: "French",
+const languageMap: Record<string, { name: string; langCode: string }> = {
+  en: { name: "English", langCode: "en" },
+  pt: { name: "Portuguese", langCode: "pt" },
+  es: { name: "Spanish", langCode: "es" },
+  ru: { name: "Russian", langCode: "ru" },
+  tr: { name: "Turkish", langCode: "tr" },
+  fr: { name: "French", langCode: "fr" },
 };
 
 export default function ChatWindow() {
@@ -25,13 +27,18 @@ export default function ChatWindow() {
       time: string;
       isUser: boolean;
       detectedLang?: string;
-      summary?: string;
+      detectedLangCode?: string;
+      isTyping?: boolean;
     }[]
   >([]);
   const [summarizer, setSummarizer] = useState<SummarizerInstance | null>(null);
   const [languageDetector, setLanguageDetector] =
     useState<LanguageDetectorInstance | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState<Record<number, boolean>>({});
+  const [selectedLanguage, setSelectedLanguage] = useState<
+    Record<number, { name: string; langCode: string }>
+  >({});
 
   // Initialize Summarizer and Language Detector
   useEffect(() => {
@@ -43,7 +50,7 @@ export default function ChatWindow() {
           ).available;
           if (summarizerAvailable !== "no") {
             const summarizerInstance = await window.ai.summarizer.create({
-              sharedContext: "Random text",
+              sharedContext: "This can be any random text",
               type: "tl;dr",
               format: "markdown",
               length: "medium",
@@ -71,17 +78,22 @@ export default function ChatWindow() {
   }, []);
 
   const handleDetect = async (text: string) => {
-    if (!languageDetector) return "Unknown";
+    if (!languageDetector) return { name: "Unknown", langCode: "unknown" };
 
     try {
       const detectionResults = await languageDetector.detect(text);
       if (Array.isArray(detectionResults) && detectionResults.length > 0) {
-        const detectedCode = detectionResults[0].detectedLanguage || "Unknown";
-        return languageMap[detectedCode] || "Unknown";
+        const detectedLangCode =
+          detectionResults[0].detectedLanguage || "unknown";
+        return {
+          name: languageMap[detectedLangCode]?.name || "Unknown",
+          langCode: detectedLangCode,
+        };
       }
     } catch (error) {
       console.error("Language detection failed:", error);
     }
+    return { name: "Unknown", langCode: "unknown" };
   };
 
   const handleSummarize = async (index: number) => {
@@ -99,11 +111,52 @@ export default function ChatWindow() {
           hour12: true,
         }),
         isUser: false,
+        isTyping: true,
       };
 
       setChats((prev) => [...prev, aiSummaryChat]);
+
+      // Remove isTyping after animation completes
+      setTimeout(() => {
+        setChats((prev) =>
+          prev.map((chat, i) =>
+            i === prev.length - 1 ? { ...chat, isTyping: false } : chat
+          )
+        );
+      }, summary.length * 20 + 100); // Adjust timing based on text length
     } catch (error) {
       console.error("Summarization failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTranslate = async (index: number) => {
+    if (!selectedLanguage[index]) return;
+
+    setLoading(true);
+    try {
+      const translation = await translateText(
+        chats[index].text,
+        selectedLanguage[index].langCode as TranslatorOptions["targetLanguage"]
+      );
+
+      if (translation) {
+        const aiTranslatedChat = {
+          text: translation,
+          time: new Date().toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+          isUser: false,
+          isTyping: true,
+        };
+
+        setChats((prev) => [...prev, aiTranslatedChat]);
+      }
+    } catch (error) {
+      console.error("Translation failed:", error);
     } finally {
       setLoading(false);
     }
@@ -126,11 +179,14 @@ export default function ChatWindow() {
     setLoading(true);
 
     try {
-      const detectedLang = await handleDetect(inputText);
+      const { name: detectedLang, langCode: detectedLangCode } =
+        await handleDetect(inputText);
 
       setChats((prev) =>
         prev.map((chat, index) =>
-          index === prev.length - 1 ? { ...chat, detectedLang } : chat
+          index === prev.length - 1
+            ? { ...chat, detectedLang, detectedLangCode }
+            : chat
         )
       );
     } catch (error) {
@@ -138,6 +194,33 @@ export default function ChatWindow() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleDropdown = (index: number) => {
+    setShowDropdown((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const handleLanguageSelect = (
+    index: number,
+    language: { name: string; langCode: string }
+  ) => {
+    setSelectedLanguage((prev) => ({
+      ...prev,
+      [index]: language,
+    }));
+    setShowDropdown((prev) => ({
+      ...prev,
+      [index]: false,
+    }));
+  };
+
+  const getAvailableLanguages = (detectedLangCode: string) => {
+    return Object.entries(languageMap)
+      .filter(([langCode]) => langCode !== detectedLangCode)
+      .map(([, value]) => value);
   };
 
   return (
@@ -189,7 +272,11 @@ export default function ChatWindow() {
                     : "bg-[#F8FAFC] text-[#475569]"
                 }`}
               >
-                {chat.text}
+                {chat.isUser || !chat.isTyping ? (
+                  chat.text
+                ) : (
+                  <Typewriter text={chat.text} speed={20} />
+                )}
               </p>
 
               {chat.detectedLang && (
@@ -199,25 +286,58 @@ export default function ChatWindow() {
                 </p>
               )}
 
-              {chat.detectedLang === "English" &&
-                chat.text.length > 150 &&
-                !chat.summary && (
-                  <button
-                    onClick={() => handleSummarize(index)}
-                    className={`mt-2 px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#3B38D6] ${
-                      loading ? "opacity-50 hover:cursor-not-allowed" : ""
-                    }`}
-                    disabled={loading}
-                  >
-                    Summarize
-                  </button>
-                )}
+              {chat.isUser && chat.detectedLang && (
+                <div className="flex gap-2 mt-2">
+                  {chat.text.length > 150 && (
+                    <button
+                      onClick={() => handleSummarize(index)}
+                      className={`px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#3B38D6] ${
+                        loading ? "opacity-50 hover:cursor-not-allowed" : ""
+                      }`}
+                      disabled={loading}
+                    >
+                      Summarize
+                    </button>
+                  )}
 
-              {chat.summary && (
-                <p className="mt-2 p-3 bg-[#F8FAFC] text-[#475569] rounded-lg">
-                  <strong>Summary:</strong>
-                  <Typewriter text={chat.summary ?? ""} speed={20} />
-                </p>
+                  <div className="relative">
+                    <button
+                      onClick={() => toggleDropdown(index)}
+                      className="px-4 py-2 bg-[#F8FAFC] text-[#475569] rounded-lg border border-[#CBD5E1] flex items-center gap-2"
+                    >
+                      {selectedLanguage[index]?.name || "Translate to"}
+                      <ChevronDownIcon className="w-5 h-5" />
+                    </button>
+
+                    {showDropdown[index] && (
+                      <div className="absolute top-full left-0 mt-1 w-full bg-white border border-[#CBD5E1] rounded-lg shadow-lg z-10">
+                        {getAvailableLanguages(chat.detectedLangCode || "").map(
+                          (lang) => (
+                            <button
+                              key={lang.langCode}
+                              onClick={() => handleLanguageSelect(index, lang)}
+                              className="w-full px-4 py-2 text-left hover:bg-[#F8FAFC] text-[#475569]"
+                            >
+                              {lang.name}
+                            </button>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {selectedLanguage[index] && (
+                    <button
+                      onClick={() => handleTranslate(index)}
+                      className={`px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#3B38D6] ${
+                        loading ? "opacity-50 hover:cursor-not-allowed" : ""
+                      }`}
+                      disabled={loading}
+                    >
+                      Translate
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           </div>
