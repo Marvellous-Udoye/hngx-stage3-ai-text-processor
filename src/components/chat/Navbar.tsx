@@ -39,7 +39,7 @@ export default function Navbar() {
           height={40}
           src={Avater}
           alt="Profile picture"
-          objectFit="cover"
+          style={{ objectFit: "cover" }}
           className="w-10 h-10 rounded-full cursor-pointer border p-1"
         />
       </div>

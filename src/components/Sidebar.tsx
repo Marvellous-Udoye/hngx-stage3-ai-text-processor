@@ -37,7 +37,7 @@ export default function Sidebar() {
           height={48}
           src={Avater}
           alt="Profile picture"
-          objectFit="cover"
+          style={{ objectFit: "cover" }}
           className="w-12 h-12 rounded-full cursor-pointer"
         />
       </div>
