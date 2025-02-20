@@ -17,7 +17,6 @@ export default function ChatWindow() {
     message: "",
   });
 
-  // Initialize Summarizer and Language Detector
   useEffect(() => {
     const initializeAPIs = async () => {
       try {
