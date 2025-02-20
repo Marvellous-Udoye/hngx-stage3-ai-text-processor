@@ -196,6 +196,13 @@ export default function ChatWindow() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      e.currentTarget.form?.requestSubmit();
+    }
+  };
+
   const toggleDropdown = (index: number) => {
     setShowDropdown((prev) => ({
       ...prev,
@@ -228,7 +235,7 @@ export default function ChatWindow() {
       <Navbar />
 
       <section
-        className="max-w-[808px] w-full mx-auto h-[67vh] px-4 py-8 overflow-y-auto"
+        className="max-w-[808px] w-full mx-auto h-[63vh] px-4 py-6 overflow-y-auto overflow-x-hidden"
         style={{ scrollbarWidth: "thin" }}
         aria-label="chat area"
       >
@@ -266,7 +273,7 @@ export default function ChatWindow() {
                 </span>
               </p>
               <p
-                className={`p-4 rounded-3xl text-[#475569] leading-[25.6px] ${
+                className={`py-2 px-3 sm:p-4 rounded-xl sm:rounded-2xl text-[#475569] leading-[25.6px] w-full ${
                   chat.isUser
                     ? "bg-[#4F46E5] text-white"
                     : "bg-[#F8FAFC] text-[#475569]"
@@ -280,18 +287,18 @@ export default function ChatWindow() {
               </p>
 
               {chat.detectedLang && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">
                   Detected Language:{" "}
                   <span className="font-semibold">{chat.detectedLang}</span>
                 </p>
               )}
 
               {chat.isUser && chat.detectedLang && (
-                <div className="flex gap-2 mt-2">
+                <div className="flex gap-2 mt-2 flex-wrap">
                   {chat.text.length > 150 && (
                     <button
                       onClick={() => handleSummarize(index)}
-                      className={`px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#3B38D6] ${
+                      className={`px-3 sm:px-4 py-2 bg-[#4F46E5] text-white rounded-lg hover:bg-[#3B38D6] ${
                         loading ? "opacity-50 hover:cursor-not-allowed" : ""
                       }`}
                       disabled={loading}
@@ -303,7 +310,7 @@ export default function ChatWindow() {
                   <div className="relative">
                     <button
                       onClick={() => toggleDropdown(index)}
-                      className="px-4 py-2 bg-[#F8FAFC] text-[#475569] rounded-lg border border-[#CBD5E1] flex items-center gap-2"
+                      className="px-3 sm:px-4 py-2 bg-[#F8FAFC] text-[#475569] rounded-lg border border-[#CBD5E1] flex items-center gap-2"
                     >
                       {selectedLanguage[index]?.name || "Translate to"}
                       <ChevronDownIcon className="w-5 h-5" />
@@ -353,20 +360,21 @@ export default function ChatWindow() {
         <div className="relative">
           <textarea
             className={`${
-              inputText ? "py-3" : "pt-7"
-            } px-14 rounded-xl w-full border border-[#CBD5E1] shadow-lg text-[#475569] focus:border-[#4F46E5] min-h-20 max-h-40 resize-none`}
+              inputText ? "py-3" : "pt-4"
+            } px-14 rounded-2xl w-full border border-[#CBD5E1] shadow-lg text-[#475569] focus:border-[#4F46E5] min-h-20 sm:min-h-28 max-h-40 resize-none`}
             placeholder="Enter text..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
-          <div className="absolute top-10 left-3 -translate-y-1/2 flex items-center justify-center rounded-full p-1">
-            <PaperClipIcon className="size-6 text-[#94A3B8] cursor-pointer" />
+          <div className="absolute top-7 left-3 -translate-y-1/2 flex items-center justify-center rounded-full p-1">
+            <PaperClipIcon className="size-6 text-[#94A3B8]" />
           </div>
           <button
             type="submit"
-            className="absolute top-10 right-3 -translate-y-1/2 p-4 rounded-md bg-[#4F46E5]"
+            className="absolute top-7 right-3 -translate-y-1/2 p-2 w-10 rounded-md bg-[#4F46E5] flex items-center justify-center"
           >
-            <PaperAirplaneIcon className="size-6 text-white" />
+            <PaperAirplaneIcon className="size-5 text-white" />
           </button>
         </div>
       </form>
