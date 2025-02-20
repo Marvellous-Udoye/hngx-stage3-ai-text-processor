@@ -11,20 +11,13 @@
   background: var(--background);
 }
 
-@media (prefers-color-scheme: dark) {
-  html.dark {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 textarea {
   overflow: auto;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none; 
 }
 
 textarea::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none; 
 }
 
 

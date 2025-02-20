@@ -1,40 +1,36 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { useTheme } from "@/context/ThemeContext";
 import {
   Bars3Icon,
   ChevronDownIcon,
   Cog6ToothIcon,
-  MoonIcon,
-  SunIcon,
   DocumentTextIcon,
   LanguageIcon,
   MagnifyingGlassIcon
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { useState } from "react";
 import Avater from "../../../public/images/avater.jpg";
 
 const apiOptions = [
   {
     icon: DocumentTextIcon,
     title: "Summarizer API",
-    description: "Convert long text into concise summaries"
+    description: "Convert long text into concise summaries",
   },
   {
     icon: LanguageIcon,
     title: "Translator API",
-    description: "Translate text between multiple languages"
+    description: "Translate text between multiple languages",
   },
   {
     icon: MagnifyingGlassIcon,
     title: "Detector API",
-    description: "Detect and analyze text patterns"
-  }
+    description: "Detect and analyze text patterns",
+  },
 ];
 
 export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
@@ -50,9 +46,9 @@ export default function Navbar() {
             <p className="font-bold text-[18px] text-[#475569] leading-6 tracking-[-0.144px]">
               Chrome APIs
             </p>
-            <ChevronDownIcon 
+            <ChevronDownIcon
               className={`text-[#475569] size-5 transition-transform duration-200 ${
-                isDropdownOpen ? 'rotate-180' : ''
+                isDropdownOpen ? "rotate-180" : ""
               }`}
             />
           </button>
@@ -86,18 +82,6 @@ export default function Navbar() {
             </div>
           )}
         </div>
-
-        <button
-          onClick={toggleTheme}
-          className="w-10 h-10 flex items-center justify-center rounded-full p-1 bg-[#EEF2FF] hover:bg-[#4F46E5]/10 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] transition-colors duration-200"
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme == "light" ? (
-            <MoonIcon className="size-5 text-[#4F46E5]" />
-          ) : (
-            <SunIcon className="size-5 text-[#4F46E5]" />
-          )}
-        </button>
 
         <div className="flex gap-3 items-center">
           <button
@@ -158,17 +142,6 @@ export default function Navbar() {
         </div>
 
         <div className="p-4 flex gap-3 justify-end border-b border-b-[#E2E8F0] w-full">
-          <button
-            onClick={toggleTheme}
-            className="w-10 h-10 flex items-center justify-center rounded-full p-1 bg-[#EEF2FF] hover:bg-[#4F46E5]/10 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] transition-colors duration-200"
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          >
-            {theme == "light" ? (
-              <MoonIcon className="size-5 text-[#4F46E5]" />
-            ) : (
-              <SunIcon className="size-5 text-[#4F46E5]" />
-            )}
-          </button>
           <button
             className="w-10 h-10 flex items-center justify-center border border-[#CBD5E1] rounded-full p-1 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] transition-colors duration-200"
             aria-label="Settings"

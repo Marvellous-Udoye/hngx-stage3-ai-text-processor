@@ -436,7 +436,7 @@ export default function ChatWindow() {
           <textarea
             className={`${
               inputText ? "py-3" : "pt-4"
-            } px-14 rounded-2xl w-full border border-[#CBD5E1] shadow-lg text-[#475569] focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5] focus:ring-opacity-50 min-h-20 sm:min-h-28 max-h-40 resize-none`}
+            } px-14 rounded-2xl w-full border-2 border-[#CBD5E1] shadow-lg text-[#475569] focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5] focus:ring-opacity-50 min-h-20 sm:min-h-28 max-h-40 resize-none`}
             placeholder="Enter text..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
