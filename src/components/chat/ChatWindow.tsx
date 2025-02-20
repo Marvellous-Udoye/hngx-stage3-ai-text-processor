@@ -1,6 +1,8 @@
 "use client";
 
+import { LanguageMap } from "@/constants/languages";
 import Typewriter from "@/hooks/useTypewriter";
+import { Chats } from "@/types/chats";
 import { translateText } from "@/utils/translator";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { PaperAirplaneIcon, PaperClipIcon } from "@heroicons/react/24/outline";
@@ -10,53 +12,22 @@ import Avater from "../../../public/images/avater.jpg";
 import Sparkles from "../../../public/images/Sparkle.svg";
 import Navbar from "./Navbar";
 
-const fadeInAnimation = `
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-const languageMap: Record<string, { name: string; langCode: string }> = {
-  en: { name: "English", langCode: "en" },
-  pt: { name: "Portuguese", langCode: "pt" },
-  es: { name: "Spanish", langCode: "es" },
-  ru: { name: "Russian", langCode: "ru" },
-  tr: { name: "Turkish", langCode: "tr" },
-  fr: { name: "French", langCode: "fr" },
-};
-
 interface ErrorState {
   show: boolean;
   message: string;
 }
 
 export default function ChatWindow() {
-  const [inputText, setInputText] = useState("");
-  const [chats, setChats] = useState<
-    {
-      text: string;
-      time: string;
-      isUser: boolean;
-      detectedLang?: string;
-      detectedLangCode?: string;
-      isTyping?: boolean;
-    }[]
-  >([]);
   const [summarizer, setSummarizer] = useState<SummarizerInstance | null>(null);
+  const [showDropdown, setShowDropdown] = useState<Record<number, boolean>>({});
   const [languageDetector, setLanguageDetector] =
     useState<LanguageDetectorInstance | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [showDropdown, setShowDropdown] = useState<Record<number, boolean>>({});
   const [selectedLanguage, setSelectedLanguage] = useState<
     Record<number, { name: string; langCode: string }>
   >({});
+  const [inputText, setInputText] = useState("");
+  const [chats, setChats] = useState<Chats[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ErrorState>({ show: false, message: "" });
   const chatContainerRef = useRef<HTMLElement>(null);
 
@@ -66,17 +37,7 @@ export default function ChatWindow() {
       const container = chatContainerRef.current;
       container.scrollTop = container.scrollHeight;
     }
-  }, [chats]); 
-
-  // Animation for the DOM
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.innerHTML = fadeInAnimation;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
+  }, [chats]);
 
   // Initialize Summarizer and Language Detector
   useEffect(() => {
@@ -111,6 +72,8 @@ export default function ChatWindow() {
               setLanguageDetector(detectorInstance);
             }
           }
+
+          
         }
       } catch {
         showError("Failed to initialize AI services. Please try again later.");
@@ -134,7 +97,7 @@ export default function ChatWindow() {
         const detectedLangCode =
           detectionResults[0].detectedLanguage || "unknown";
         return {
-          name: languageMap[detectedLangCode]?.name || "Unknown",
+          name: LanguageMap[detectedLangCode]?.name || "Unknown",
           langCode: detectedLangCode,
         };
       }
@@ -275,7 +238,7 @@ export default function ChatWindow() {
   };
 
   const getAvailableLanguages = (detectedLangCode: string) => {
-    return Object.entries(languageMap)
+    return Object.entries(LanguageMap)
       .filter(([langCode]) => langCode !== detectedLangCode)
       .map(([, value]) => value);
   };
