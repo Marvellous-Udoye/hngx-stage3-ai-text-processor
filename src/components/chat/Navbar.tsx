@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext";
 import {
   Bars3Icon,
   ChevronDownIcon,
@@ -9,6 +10,8 @@ import Image from "next/image";
 import Avater from "../../../public/images/avater.jpg";
 
 export default function Navbar() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <div className="flex items-center justify-between border-b border-b-[#CBD5E1] py-[19px] px-8">
       <div className="flex gap-2 items-center">
@@ -19,11 +22,15 @@ export default function Navbar() {
       </div>
 
       <div className="flex gap-2">
-        <div className="w-10 h-10 flex items-center justify-center rounded-full p-1 bg-[#EEF2FF]">
-          <SunIcon className="size-6 text-[#4F46E5] cursor-pointer" />
-        </div>
-        <div className="w-10 h-10 flex items-center justify-center p-1 ">
-          <MoonIcon className="size-6 text-[#475569] cursor-pointer" />
+        <div
+          onClick={toggleTheme}
+          className="w-10 h-10 flex items-center justify-center rounded-full p-1 bg-[#EEF2FF]  cursor-pointer"
+        >
+          {theme == "light" ? (
+            <MoonIcon className="size-6 text-[#475569]" />
+          ) : (
+            <SunIcon className="size-6 text-[#4F46E5]" />
+          )}
         </div>
       </div>
 
