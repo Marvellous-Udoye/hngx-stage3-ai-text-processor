@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-Powered Text Processor
 
-## Getting Started
+## Overview
+This project is an AI-powered text processing interface built using **Next.js, Tailwind CSS, TypeScript, and Headless UI**. It leverages Chrome's experimental AI APIs to provide text summarization, translation, and language detection within a chat-like interface.
 
-First, run the development server:
+> **Note:** You may need to enable experimental AI features in Chrome to access these APIs.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Core Functionalities
+- **Chat-Like UI:** Users can input text in a textarea at the bottom, and the processed output is displayed above, mimicking a chat interface.
+- **Language Detection:** Automatically detects the language of the input text using the **Language Detector API**.
+- **Summarization:** If the text exceeds 150 characters and is in English, a **"Summarize"** button appears to generate a summary.
+- **Translation:** Users can select a target language and translate the output text using the **Translator API**.
+- **Responsive Design:** Optimized for desktop, tablet, and mobile devices.
+- **Accessibility:** Keyboard-navigable interface with meaningful ARIA labels.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Supported Languages for Translation
+- English (`en`)
+- Portuguese (`pt`)
+- Spanish (`es`)
+- Russian (`ru`)
+- Turkish (`tr`)
+- French (`fr`)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Requirements & Implementation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### User Interface
+- The UI should look like a chat interface with:
+  - A **large input textarea** at the bottom.
+  - A **send button** that displays only a send icon.
+  - An **output area** above, displaying processed results.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Functional Flow
+1. **User Inputs Text:**  
+   - Text appears in the output area upon submission.
+   - The detected language is displayed below the text.
 
-## Deploy on Vercel
+2. **Summarization (if applicable):**  
+   - If the text is in English and exceeds 150 characters, a "Summarize" button is rendered.
+   - Clicking it generates a summary using the **Summarizer API**.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Translation:**  
+   - A dropdown allows users to select a language.
+   - Clicking "Translate" converts the text using the **Translator API**.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Displaying Results:**  
+   - Translated or summarized text is displayed below the initial output text.
+
+---
+
+## Tech Stack
+- **Next.js** – React framework for building the UI.
+- **Tailwind CSS** – Styling and responsive design.
+- **TypeScript** – Type safety and maintainability.
+- **Headless UI** – Accessible UI components.
+- **Chrome AI APIs** – Text processing (summarization, translation, and language detection).
