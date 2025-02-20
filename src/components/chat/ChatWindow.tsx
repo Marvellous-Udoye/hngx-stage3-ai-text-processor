@@ -11,6 +11,9 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import Avater from "../../../public/images/avater.jpg";
 import Sparkles from "../../../public/images/Sparkle.svg";
 import Navbar from "./Navbar";
+import { formatTime } from "@/utils/timeFormatter";
+import { handleKeyDown } from "@/utils/keyDown";
+import { getAvailableLanguages } from "@/utils/getLanguages";
 
 interface ErrorState {
   show: boolean;
@@ -72,8 +75,6 @@ export default function ChatWindow() {
               setLanguageDetector(detectorInstance);
             }
           }
-
-          
         }
       } catch {
         showError("Failed to initialize AI services. Please try again later.");
@@ -116,11 +117,7 @@ export default function ChatWindow() {
 
       const aiSummaryChat = {
         text: summary,
-        time: new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
+        time: formatTime(new Date()),
         isUser: false,
         isTyping: true,
       };
@@ -154,11 +151,7 @@ export default function ChatWindow() {
       if (translation) {
         const aiTranslatedChat = {
           text: translation,
-          time: new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          }),
+          time: formatTime(new Date()),
           isUser: false,
           isTyping: true,
         };
@@ -179,11 +172,7 @@ export default function ChatWindow() {
       return;
     }
 
-    const timestamp = new Date().toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    const timestamp = formatTime(new Date());
 
     const newChat = { text: inputText, time: timestamp, isUser: true };
 
@@ -209,13 +198,6 @@ export default function ChatWindow() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      e.currentTarget.form?.requestSubmit();
-    }
-  };
-
   const toggleDropdown = (index: number) => {
     setShowDropdown((prev) => ({
       ...prev,
@@ -235,12 +217,6 @@ export default function ChatWindow() {
       ...prev,
       [index]: false,
     }));
-  };
-
-  const getAvailableLanguages = (detectedLangCode: string) => {
-    return Object.entries(LanguageMap)
-      .filter(([langCode]) => langCode !== detectedLangCode)
-      .map(([, value]) => value);
   };
 
   return (
