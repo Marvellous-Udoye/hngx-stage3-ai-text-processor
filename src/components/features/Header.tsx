@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
 import {
+  ChevronDownIcon,
   CpuChipIcon,
   LightBulbIcon,
   ShoppingCartIcon,
-  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
+import { useState } from 'react';
 
 const options = [
   {
     icon: CpuChipIcon,
-    title: "Explore GPTs",
-    description: "Browse and discover GPT models",
+    title: "Smart Summarize",
+    description: "Generate concise and insightful summaries instantly",
   },
   {
     icon: ShoppingCartIcon,
-    title: "GPT store",
-    description: "Purchase and manage GPT models",
+    title: "Quick Translate",
+    description: "Translate text across multiple languages effortlessly",
   },
   {
     icon: LightBulbIcon,
-    title: "Custom Instructions",
-    description: "Configure your GPT settings",
+    title: "Deep Detect",
+    description: "Identify key elements and insights within any text",
   },
 ];
 
@@ -59,14 +59,10 @@ export default function Header() {
       <nav aria-label="Feature options">
         <ul className="flex flex-col" role="menu">
           {options.map((option, index) => (
-            <li 
-              key={index} 
-              role="none" 
-              className="border-b border-b-[#CBD5E1]"
-            >
+            <li key={index} role="none" className="border-b border-b-[#CBD5E1]">
               <button
-                className={`w-full px-6 py-5 focus:outline-none focus:bg-gray-50 group transition-all duration-300 ${
-                  expandedIndex === index ? 'bg-gray-50' : ''
+                className={`w-full px-6 py-3 focus:outline-none focus:bg-gray-50 group transition-all duration-300 ${
+                  expandedIndex === index ? "bg-gray-50" : ""
                 }`}
                 role="menuitem"
                 aria-expanded={expandedIndex === index}
@@ -76,9 +72,9 @@ export default function Header() {
               >
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 group-hover:bg-[#EEF2FF] transition-colors duration-300">
-                    <option.icon 
-                      className="w-5 h-5 text-[#94A3B8] group-hover:text-[#4F46E5]" 
-                      aria-hidden="true" 
+                    <option.icon
+                      className="w-5 h-5 text-[#94A3B8] group-hover:text-[#4F46E5]"
+                      aria-hidden="true"
                     />
                   </div>
                   <span className="relative">
@@ -87,16 +83,18 @@ export default function Header() {
                     </h3>
                     <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-[#4F46E5] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                   </span>
-                  <ChevronDownIcon 
+                  <ChevronDownIcon
                     className={`w-5 h-5 ml-auto text-[#94A3B8] transition-transform duration-300 ${
-                      expandedIndex === index ? 'rotate-180' : ''
+                      expandedIndex === index ? "rotate-180" : ""
                     }`}
                   />
                 </div>
                 <div
                   id={`description-${index}`}
                   className={`overflow-hidden transition-all duration-300 ${
-                    expandedIndex === index ? 'max-h-20 mt-3 opacity-100' : 'max-h-0 opacity-0'
+                    expandedIndex === index
+                      ? "max-h-20 mt-3 opacity-100"
+                      : "max-h-0 opacity-0"
                   }`}
                 >
                   <p className="text-[14px] text-[#475569] pl-[52px]">
