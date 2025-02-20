@@ -5,7 +5,7 @@ import { translateText } from "@/utils/translator";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { PaperAirplaneIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Avater from "../../../public/images/avater.jpg";
 import Sparkles from "../../../public/images/Sparkle.svg";
 import Navbar from "./Navbar";
@@ -58,6 +58,15 @@ export default function ChatWindow() {
     Record<number, { name: string; langCode: string }>
   >({});
   const [error, setError] = useState<ErrorState>({ show: false, message: "" });
+  const chatContainerRef = useRef<HTMLElement>(null);
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const container = chatContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [chats]); 
 
   // Animation for the DOM
   useEffect(() => {
@@ -276,7 +285,8 @@ export default function ChatWindow() {
       <Navbar />
 
       <section
-        className="max-w-[808px] w-full mx-auto h-[63vh] px-4 py-6 overflow-y-auto overflow-x-hidden relative"
+        ref={chatContainerRef}
+        className="max-w-[808px] w-full mx-auto h-[60vh] sm:h-[63vh] px-4 py-6 overflow-y-auto overflow-x-hidden relative"
         style={{ scrollbarWidth: "thin" }}
         aria-label="Chat messages"
         role="log"
