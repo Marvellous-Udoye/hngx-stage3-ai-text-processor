@@ -44,7 +44,7 @@ declare global {
   }
 
   interface TranslatorOptions {
-    sourceLanguage: "auto" | "en" | "pt" | "es" | "ru" | "tr" | "fr";
+    sourceLanguage: "en" | "pt" | "es" | "ru" | "tr" | "fr";
     targetLanguage: "en" | "pt" | "es" | "ru" | "tr" | "fr";
   }
 

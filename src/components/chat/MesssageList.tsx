@@ -10,6 +10,7 @@ interface MessageListProps {
   loading: boolean;
   error: { show: boolean; message: string };
   summarizer: SummarizerInstance | null;
+  translator: TranslatorInstance | null;
   languageDetector: LanguageDetectorInstance | null;
   showError: (message: string) => void;
   setLoading: (loading: boolean) => void;
@@ -21,6 +22,7 @@ export default function MessageList({
   loading,
   error,
   summarizer,
+  translator,
   showError,
   setLoading,
 }: MessageListProps) {
@@ -61,6 +63,7 @@ export default function MessageList({
           loading={loading}
           setLoading={setLoading}
           summarizer={summarizer}
+          translator={translator}
           showError={showError}
         />
       ))}

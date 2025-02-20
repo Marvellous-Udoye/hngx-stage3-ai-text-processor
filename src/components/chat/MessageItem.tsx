@@ -19,6 +19,7 @@ interface MessageItemProps {
   loading: boolean;
   setLoading: (loading: boolean) => void;
   summarizer: SummarizerInstance | null;
+  translator: TranslatorInstance | null;
   showError: (message: string) => void;
 }
 
@@ -43,22 +44,14 @@ export default function MessageItem({
     try {
       const summary = await summarizer.summarize(chat.text);
 
-      const aiSummaryChat = {
+      const aiSummarizedChat = {
         text: summary,
         time: formatTime(new Date()),
         isUser: false,
         isTyping: true,
       };
 
-      setChats((prev) => [...prev, aiSummaryChat]);
-
-      setTimeout(() => {
-        setChats((prev) =>
-          prev.map((chat, i) =>
-            i === prev.length - 1 ? { ...chat, isTyping: false } : chat
-          )
-        );
-      }, summary.length * 20 + 100);
+      setChats((prev) => [...prev, aiSummarizedChat]);
     } catch {
       showError("Summarization failed. Please try again.");
     } finally {

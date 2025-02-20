@@ -5,7 +5,7 @@ export const translateText = async (text: string, targetLanguage: TranslatorOpti
   }
 
   const options: TranslatorOptions = {
-    sourceLanguage: "auto", 
+    sourceLanguage: "en", 
     targetLanguage,
   };
 

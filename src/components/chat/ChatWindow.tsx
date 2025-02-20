@@ -8,6 +8,7 @@ import Navbar from "./Navbar";
 
 export default function ChatWindow() {
   const [summarizer, setSummarizer] = useState<SummarizerInstance | null>(null);
+  const [translator, setTranslator] = useState<TranslatorInstance | null>(null);
   const [languageDetector, setLanguageDetector] =
     useState<LanguageDetectorInstance | null>(null);
   const [chats, setChats] = useState<Chats[]>([]);
@@ -48,6 +49,20 @@ export default function ChatWindow() {
               setLanguageDetector(detectorInstance);
             }
           }
+
+          if (window.ai.translator) {
+            const translatorAvailable = (
+              await window.ai.translator.capabilities()
+            ).available;
+            if (translatorAvailable !== "no") {
+              const translatorInstance = await window.ai.translator.create({
+                sourceLanguage: "en",
+                targetLanguage: "fr",
+              });
+              await translatorInstance.ready;
+              setTranslator(translatorInstance);
+            }
+          }
         }
       } catch {
         showError("Failed to initialize AI services. Please try again later.");
@@ -72,6 +87,7 @@ export default function ChatWindow() {
         error={error}
         summarizer={summarizer}
         languageDetector={languageDetector}
+        translator={translator}
         showError={showError}
         setLoading={setLoading}
       />
