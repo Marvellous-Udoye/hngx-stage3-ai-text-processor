@@ -38,7 +38,7 @@ export default function MessageList({
   return (
     <section
       ref={chatContainerRef}
-      className="max-w-[808px] w-full mx-auto h-[60vh] sm:h-[63vh] px-4 py-6 overflow-y-auto overflow-x-hidden relative"
+      className="max-w-[808px] w-full mx-auto h-[63vh] px-4 py-6 overflow-y-auto overflow-x-hidden relative"
       style={{ scrollbarWidth: "thin" }}
       aria-label="Chat messages"
       role="log"

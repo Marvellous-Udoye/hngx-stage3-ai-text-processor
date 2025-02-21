@@ -1,4 +1,4 @@
-export const summarizeText = async () => {
+export const summarizeText = async (textToSummarize: string) => {
   if (typeof window === "undefined" || !window.ai?.summarizer) {
     console.error("Summarizer API is not available.");
     return null;
@@ -6,14 +6,13 @@ export const summarizeText = async () => {
 
   const options: SummarizerOptions = {
     sharedContext: "This can be any random text",
-    type: "tl;dr", 
-    format: "markdown", 
+    type: "tl;dr",
+    format: "markdown",
     length: "medium",
   };
 
   try {
     const available = (await window.ai.summarizer.capabilities()).available;
-    let summarizer;
 
     if (available === "no") {
       console.log("The Summarizer API isn't usable.");
@@ -22,10 +21,12 @@ export const summarizeText = async () => {
 
     if (available === "readily") {
       console.log("The Summarizer API can be used immediately.");
-      summarizer = await window.ai.summarizer.create(options);
-    } else {
-      console.log("The Summarizer API can be used after the model is downloaded.");
-      summarizer = await window.ai.summarizer.create(options);
+    }
+
+    const summarizer = await window.ai.summarizer.create(options);
+
+    if (available === "after-download") {
+      console.log("The Summarizer API an be used after the model is downloaded.");
       summarizer.addEventListener(
         "downloadprogress",
         (e: { loaded: number; total: number }) => {
@@ -35,7 +36,6 @@ export const summarizeText = async () => {
       await summarizer.ready;
     }
 
-    const textToSummarize = "input text";
     const summary = await summarizer.summarize(textToSummarize);
     return summary;
   } catch (error) {

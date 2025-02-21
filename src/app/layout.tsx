@@ -24,6 +24,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const summarizerToken = process.env.NEXT_PUBLIC_SUMMARIZER_TOKEN;
+  const detectorToken = process.env.NEXT_PUBLIC_LANGUAGE_DETECTOR_TOKEN;
+  const translatorToken = process.env.NEXT_PUBLIC_TRANSLATOR_TOKEN;
+
   return (
     <html lang="en">
       <head>
@@ -32,6 +36,9 @@ export default function RootLayout({
           href="/images/Sparkle.svg"
           type="image/x-icon"
         />
+        <meta httpEquiv="origin trial" content={summarizerToken} />
+        <meta httpEquiv="origin trial" content={detectorToken} />
+        <meta httpEquiv="origin trial" content={translatorToken} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

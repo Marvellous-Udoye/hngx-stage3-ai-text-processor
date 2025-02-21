@@ -3,6 +3,7 @@
 import Typewriter from "@/hooks/useTypewriter";
 import { Chats } from "@/types/chats";
 import { getAvailableLanguages } from "@/utils/getLanguages";
+import { summarizeText } from "@/utils/summarizer";
 import { formatTime } from "@/utils/timeFormatter";
 import { translateText } from "@/utils/translator";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
@@ -28,7 +29,6 @@ export default function MessageItem({
   setChats,
   loading,
   setLoading,
-  summarizer,
   showError,
 }: MessageItemProps) {
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -38,20 +38,22 @@ export default function MessageItem({
   } | null>(null);
 
   const handleSummarize = async () => {
-    if (!summarizer) return;
+    if (!chat.text) return;
 
     setLoading(true);
     try {
-      const summary = await summarizer.summarize(chat.text);
+      const summary = await summarizeText(chat.text);
 
-      const aiSummarizedChat = {
-        text: summary,
-        time: formatTime(new Date()),
-        isUser: false,
-        isTyping: true,
-      };
+      if (summary) {
+        const aiSummarizedChat: Chats = {
+          text: summary,
+          time: formatTime(new Date()),
+          isUser: false,
+          isTyping: true,
+        };
 
-      setChats((prev) => [...prev, aiSummarizedChat]);
+        setChats((prev) => [...prev, aiSummarizedChat]);
+      }
     } catch {
       showError("Summarization failed. Please try again.");
     } finally {

@@ -3,13 +3,29 @@ export const translateText = async (text: string, targetLanguage: TranslatorOpti
     console.error("Translator API is not available.");
     return null;
   }
-
-  const options: TranslatorOptions = {
-    sourceLanguage: "en", 
-    targetLanguage,
-  };
-
+  
   try {
+    const detector = await window.ai.languageDetector.create();
+    const detectedLanguages = (await detector.detect(text)) as unknown as {
+      detectedLanguage: string;
+      confidence: number;
+    }[];
+    
+    if (!detectedLanguages || detectedLanguages.length === 0) {
+      console.warn("No language detected, defaulting to English.");
+      return null;
+    }
+
+    const mostConfident = detectedLanguages[0].detectedLanguage as TranslatorOptions["sourceLanguage"];
+
+    const supportedLanguages: TranslatorOptions["sourceLanguage"][] = ["en", "pt", "es", "ru", "tr", "fr"];
+    const sourceLanguage = supportedLanguages.includes(mostConfident) ? mostConfident : "en";
+
+    const options: TranslatorOptions = {
+      sourceLanguage,
+      targetLanguage,
+    };
+
     const available = (await window.ai.translator.capabilities()).available;
     let translator;
 

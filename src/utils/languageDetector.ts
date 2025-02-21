@@ -5,23 +5,21 @@ export const detectLanguage = async () => {
   }
 
   try {
-    const languageDetectorCapabilities =
-      await window.ai.languageDetector.capabilities();
-    const canDetect = languageDetectorCapabilities.available;
+    const canDetect = (await window.ai.languageDetector.capabilities()).available;
 
-    let detector;
     if (canDetect === "no") {
-      console.log("The language detector isn't usable.");
+      console.log("The Language Detector API isn't usable.");
       return null;
     }
-    if (canDetect === "readily") {
-      console.log("The language detector can immediately be used.");
-      detector = await window.ai.languageDetector.create();
-    } else {
-      console.log("The language detector can be used after model download.");
-      detector = await window.ai.languageDetector.create();
+
+    const detector = await window.ai.languageDetector.create();
+
+    if (canDetect === "after-download") {
+      console.log("Waiting for language detector model download...");
       await detector.ready;
     }
+
+    return detector;
   } catch (error) {
     console.error("Error using Language Detector API:", error);
     return null;

@@ -1,6 +1,7 @@
 import { LanguageMap } from "@/constants/languages";
 import { Chats } from "@/types/chats";
 import { handleKeyDown } from "@/utils/keyDown";
+import { detectLanguage } from "@/utils/languageDetector";
 import { formatTime } from "@/utils/timeFormatter";
 import { PaperAirplaneIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 import { FormEvent, useState } from "react";
@@ -18,11 +19,11 @@ export default function ChatInput({
   loading,
   setLoading,
   showError,
-  languageDetector,
 }: ChatInputProps) {
   const [inputText, setInputText] = useState("");
 
   const handleDetect = async (text: string) => {
+    const languageDetector = await detectLanguage();
     if (!languageDetector) return { name: "Unknown", langCode: "unknown" };
 
     try {
@@ -38,6 +39,7 @@ export default function ChatInput({
     } catch {
       showError("Language detection failed. Please try again.");
     }
+
     return { name: "Unknown", langCode: "unknown" };
   };
 
@@ -83,7 +85,7 @@ export default function ChatInput({
         <textarea
           className={`${
             inputText ? "py-3" : "pt-4"
-          } px-14 rounded-2xl w-full border-2 border-[#CBD5E1] shadow-lg text-[#475569] focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5] focus:ring-opacity-50 min-h-20 sm:min-h-28 max-h-40 resize-none`}
+          } px-14 rounded-lg sm:rounded-2xl w-full border-2 border-[#CBD5E1] text-[#475569] focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5] focus:ring-opacity-50 h-14 sm:min-h-28 max-h-40 resize-none`}
           placeholder="Enter text..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
